@@ -88,9 +88,11 @@ if [ ! -f "${full_binary_path}" ]; then
     exit 1
 fi
 
-LOG_DIR="./log/${TIMESTAMP}-${binary}-verilator-run-log"
+LOG_DIR="${ROOT}/log/${TIMESTAMP}-${binary}-verilator-run-log"
 mkdir -p "${LOG_DIR}"
 
 cd ../../sims/verilator/
-./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose $PK ${full_binary_path} 1>${LOG_DIR}/stdout.log 2>${LOG_DIR}//stderr.log
+./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose $PK ${full_binary_path} \
+    &> >(tee ${LOG_DIR}/stdout.log) \
+    2>${LOG_DIR}/stderr.log
 
