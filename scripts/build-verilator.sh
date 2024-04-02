@@ -15,7 +15,7 @@ help () {
 
 show_help=0
 debug=""
-j="1"
+j="256"
 
 while [ $# -gt 0 ] ; do
   case $1 in

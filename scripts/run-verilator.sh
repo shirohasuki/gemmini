@@ -3,6 +3,7 @@
 ROOT="$PWD/"
 
 WAVEFORM="waveforms/waveform.vcd"
+TIMESTAMP=$(date +%Y-%m-%d-%H-%M)
 
 help () {
   echo "Run a RISCV Gemmini program on Verilator, a cycle-accurate simulator"
@@ -87,6 +88,9 @@ if [ ! -f "${full_binary_path}" ]; then
     exit 1
 fi
 
+LOG_DIR="./log/${TIMESTAMP}-${binary}-verilator-run-log"
+mkdir -p "${LOG_DIR}"
+
 cd ../../sims/verilator/
-./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} $PK ${full_binary_path}
+./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose $PK ${full_binary_path} 1>${LOG_DIR}/stdout.log 2>${LOG_DIR}//stderr.log
 

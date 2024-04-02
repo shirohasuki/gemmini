@@ -4,7 +4,7 @@ package chipyard
 import boom.common._
 import freechips.rocketchip.subsystem._
 
-object CustomGemmminiCPUConfigs {
+object CustomGemminiCPUConfigs {
   // Default CPU configs
   type RocketBigCores = WithNBigCores
   type RocketMedCores = WithNMedCores
