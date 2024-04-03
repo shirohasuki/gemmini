@@ -343,3 +343,7 @@ configs/
 generated-src/
 waveforms/
 
+# Gemmini specific
+.bloop/
+.metals/
+.vscode/
