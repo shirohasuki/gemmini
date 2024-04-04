@@ -92,7 +92,12 @@ LOG_DIR="${ROOT}/log/${TIMESTAMP}-${binary}-verilator-run-log"
 mkdir -p "${LOG_DIR}"
 
 cd ../../sims/verilator/
-./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose $PK ${full_binary_path} \
+# ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose +payload=${full_binary_path} $PK ${full_binary_path} 2>&1 | spike-dasm
+#     # &> >(tee ${LOG_DIR}/stdout.log) \
+#     # 2>${LOG_DIR}/stderr.log
+
+./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose  +payload=${full_binary_path} $PK ${full_binary_path} \
     &> >(tee ${LOG_DIR}/stdout.log) \
-    2>${LOG_DIR}/stderr.log
+    2> >(spike-dasm > ${LOG_DIR}/disasm.log)
+
 
