@@ -347,3 +347,5 @@ waveforms/
 .bloop/
 .metals/
 .vscode/
+generated-src/
+log/
