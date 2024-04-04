@@ -2,9 +2,6 @@
 
 ROOT="$PWD/"
 
-WAVEFORM="waveforms/waveform.vcd"
-TIMESTAMP=$(date +%Y-%m-%d-%H-%M)
-
 help () {
   echo "Run a RISCV Gemmini program on Verilator, a cycle-accurate simulator"
   echo
@@ -53,6 +50,9 @@ while [ $# -gt 0 ] ; do
   shift
 done
 
+TIMESTAMP=$(date +%Y-%m-%d-%H-%M)
+WAVEFORM="waveforms/${TIMESTAMP}-${binary}-waveform.vcd"
+
 if [ $show_help -eq 1 ]; then
    help
 fi
@@ -92,12 +92,16 @@ LOG_DIR="${ROOT}/log/${TIMESTAMP}-${binary}-verilator-run-log"
 mkdir -p "${LOG_DIR}"
 
 cd ../../sims/verilator/
-# ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose +payload=${full_binary_path} $PK ${full_binary_path} 2>&1 | spike-dasm
-#     # &> >(tee ${LOG_DIR}/stdout.log) \
-#     # 2>${LOG_DIR}/stderr.log
 
-./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +verbose  +payload=${full_binary_path} $PK ${full_binary_path} \
-    &> >(tee ${LOG_DIR}/stdout.log) \
-    2> >(spike-dasm > ${LOG_DIR}/disasm.log)
+# ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} -V $PK ${full_binary_path} \
+#     &> >(tee ${LOG_DIR}/stdout.log) \
+#     2> >(spike-dasm > ${LOG_DIR}/disasm.log)
 
+# make run-binary CONFIG=CustomGemminiSoCConfig BINARY=${full_binary_path} LOADMEM=${full_binary_path} LOADMEM_ADDR=80000000 VERILATOR_THREADS=256  # 哒咩
+# make CONFIG=CustomGemminiSoCConfig run-binary-hex BINARY=${full_binary_path}  VERILATOR_THREADS=256  # 奈斯
 
+/home/shiroha/Code/chipyard/scripts/smartelf2hex.sh ${full_binary_path} > ${full_binary_path}.loadmem_hex
+./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +permissive +dramsim +dramsim_ini_dir=/home/shiroha/Code/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +loadmem=${full_binary_path}.loadmem_hex +loadmem_addr=80000000 +verbose +permissive-off  ${full_binary_path} </dev/null 2> >(spike-dasm > ${LOG_DIR}/${binary}${suffix}.out) | tee ${LOG_DIR}/${binary}${suffix}.log # 哒咩
+#  +permissive +dramsim +dramsim_ini_dir=/home/shiroha/Code/chipyard/generators/testchipip/src/main/resources/dramsim2_ini  +loadmem=/home/shiroha/Code/chipyard/sims/verilator/output/chipyard.TestHarness.CustomGemminiSoCConfig/template-baremetal.loadmem_hex +loadmem_addr=80000000   +verbose +permissive-off /home/shiroha/Code/chipyard/generators/gemmini//software/gemmini-rocc-tests/build/bareMetalC/template-baremetal </dev/null 2> >(spike-dasm > /home/shiroha/Code/chipyard/sims/verilator/output/chipyard.TestHarness.CustomGemminiSoCConfig/template-baremetal.out) | tee /home/shiroha/Code/chipyard/sims/verilator/output/chipyard.TestHarness.CustomGemminiSoCConfig/template-baremetal.log)
+
+# ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +permissive +dramsim +dramsim_ini_dir=/home/shiroha/Code/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +loadmem=${full_binary_path} +loadmem_addr=80000000 +verbose +permissive-off  ${full_binary_path} </dev/null 2> >(spike-dasm > ${LOG_DIR}/${binary}${suffix}.out) | tee ${LOG_DIR}/${binary}${suffix}.log # 哒咩
