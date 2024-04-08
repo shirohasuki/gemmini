@@ -97,15 +97,10 @@ cd ../../sims/verilator/
 #     &> >(tee ${LOG_DIR}/stdout.log) \
 #     2> >(spike-dasm > ${LOG_DIR}/disasm.log)
 
-# make run-binary CONFIG=CustomGemminiSoCConfig BINARY=${full_binary_path} LOADMEM=${full_binary_path} LOADMEM_ADDR=80000000 VERILATOR_THREADS=256  # 哒咩
-# make CONFIG=CustomGemminiSoCConfig run-binary-hex BINARY=${full_binary_path}  VERILATOR_THREADS=256  # 奈斯
-
 /home/shiroha/Code/chipyard/scripts/smartelf2hex.sh ${full_binary_path} > ${full_binary_path}.loadmem_hex
-# ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +permissive +dramsim +dramsim_ini_dir=/home/shiroha/Code/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +loadmem=${full_binary_path}.loadmem_hex +loadmem_addr=80000000 +verbose +permissive-off  ${full_binary_path} </dev/null 2> >(spike-dasm > ${LOG_DIR}/${binary}${suffix}.out) | tee ${LOG_DIR}/${binary}${suffix}.log # 奈斯
 ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +permissive  \
     +dramsim +dramsim_ini_dir=/home/shiroha/Code/chipyard/generators/testchipip/src/main/resources/dramsim2_ini \
     +loadmem=${full_binary_path}.loadmem_hex +loadmem_addr=80000000 +verbose \
     +permissive-off  ${full_binary_path} \
     &> >(tee ${LOG_DIR}/stdout.log) \
     2> >(spike-dasm > ${LOG_DIR}/disasm.log)
-# ./simulator-chipyard-CustomGemminiSoCConfig${DEBUG} +permissive +dramsim +dramsim_ini_dir=/home/shiroha/Code/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +loadmem=${full_binary_path} +loadmem_addr=80000000 +verbose +permissive-off  ${full_binary_path} </dev/null 2> >(spike-dasm > ${LOG_DIR}/${binary}${suffix}.out) | tee ${LOG_DIR}/${binary}${suffix}.log # 哒咩
